@@ -5,177 +5,377 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CVC Word Families — ฝึกสะกดออกเสียง</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Mitr:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#fff8ef; --paper:#ffffff; --ink:#2b2a33; --muted:#8a8494;
-    --onset:#2f6fde; --rime:#e0457b; --line:#cfd6c4; --ring:#3fb26b;
-    --a:#e0457b; --e:#f08a24; --i:#3fb26b; --o:#2f6fde; --u:#8a4fd6;
-    --shadow:0 6px 20px rgba(60,40,20,.08);
+    --bg:#fbf6ee; --paper:#ffffff; --ink:#2a2733; --muted:#8c8696; --soft:#f4efe7; --border:#ece5da;
+    --onset:#2f6fde; --onset-bg:#eaf1ff; --rime:#d93e74; --rime-bg:#fdebf2;
+    --line:#d9dccf; --ring:#3fa86a; --hl:#fff1c2;
+    --a:#d93e74; --e:#ea8a2a; --i:#3fa86a; --o:#2f6fde; --u:#8a4fd6;
+    --shadow:0 1px 2px rgba(60,40,20,.05), 0 8px 24px rgba(60,40,20,.06);
+    --r:20px;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Mitr',sans-serif;}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:'Mitr',sans-serif;font-weight:400}
   .latin{font-family:'Andika',sans-serif}
-  header{padding:22px 20px 6px;text-align:center}
-  h1{margin:0;font-weight:600;font-size:clamp(22px,4vw,32px)}
-  h1 .latin{color:var(--rime)}
-  .sub{color:var(--muted);font-size:15px;margin-top:4px}
-  main{max-width:1000px;margin:0 auto;padding:10px 16px 40px}
+  button{font-family:inherit}
 
-  /* vowel + family pickers */
-  .vowels{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0 10px}
-  .vbtn{border:none;border-radius:999px;padding:8px 16px;font:500 15px 'Mitr';cursor:pointer;background:#fff;box-shadow:var(--shadow);color:var(--ink)}
-  .vbtn b{font-family:'Andika';font-size:20px;margin-right:6px}
-  .vbtn.on{color:#fff}
-  .families{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
-  .fbtn{border:2px solid transparent;background:#fff;border-radius:14px;padding:6px 14px;font:700 22px 'Andika';cursor:pointer;box-shadow:var(--shadow);color:var(--rime)}
-  .fbtn.on{border-color:var(--rime);background:#fff0f5}
+  .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
 
-  .grid{display:grid;grid-template-columns:1.25fr 1fr;gap:18px}
-  @media (max-width:820px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--paper);border-radius:22px;box-shadow:var(--shadow);padding:14px}
+  /* ---------- sidebar ---------- */
+  aside{background:var(--paper);border-right:1px solid var(--border);padding:22px 14px;position:sticky;top:0;height:100vh;overflow:auto}
+  .brand{padding:0 8px 18px}
+  .brand h1{margin:0;font-size:21px;font-weight:600;line-height:1.25}
+  .brand h1 span{color:var(--rime)}
+  .brand p{margin:4px 0 0;font-size:13px;color:var(--muted);font-weight:300}
+  .nav{display:flex;flex-direction:column;gap:4px}
+  .nav button{display:flex;align-items:center;gap:12px;width:100%;border:none;background:transparent;text-align:left;
+    padding:10px 10px;border-radius:14px;cursor:pointer;color:var(--ink);transition:background .15s}
+  .nav button:hover{background:var(--soft)}
+  .nav .num{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:var(--soft);
+    font:600 14px 'Andika';color:var(--muted)}
+  .nav .txt{display:flex;flex-direction:column;min-width:0}
+  .nav .t{font-size:15px;font-weight:500}
+  .nav .ex{font:400 13px 'Andika';color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .nav button.on{background:var(--ink);color:#fff}
+  .nav button.on .num{background:rgba(255,255,255,.15);color:#fff}
+  .nav button.on .ex{color:rgba(255,255,255,.7)}
+
+  /* ---------- content ---------- */
+  .content{padding:26px 28px 40px;max-width:1120px;width:100%}
+  .head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+  .head h2{margin:0;font-size:26px;font-weight:600}
+  .head p{margin:2px 0 0;color:var(--muted);font-size:15px;font-weight:300}
+
+  .toolbar{background:var(--paper);border-radius:var(--r);box-shadow:var(--shadow);padding:12px 14px;display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .row .lbl{font-size:13px;color:var(--muted);min-width:64px}
+  .seg{display:inline-flex;background:var(--soft);border-radius:12px;padding:3px;gap:2px;flex-wrap:wrap}
+  .seg button{border:none;background:transparent;border-radius:10px;padding:6px 14px;cursor:pointer;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:6px}
+  .seg button b{font:700 17px 'Andika'}
+  .seg button.on{background:var(--paper);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .seg button .dot{width:8px;height:8px;border-radius:50%;background:var(--c)}
+  .pills{display:flex;gap:6px;flex-wrap:wrap}
+  .pill{border:1.5px solid var(--border);background:var(--paper);border-radius:999px;padding:4px 14px;cursor:pointer;
+    font:700 19px 'Andika';color:var(--rime);transition:all .15s}
+  .pill.o{color:var(--onset)}
+  .pill:hover{border-color:currentColor}
+  .pill.on{background:var(--rime);border-color:var(--rime);color:#fff}
+  .pill.o.on{background:var(--onset);border-color:var(--onset)}
+  .pill small{font:400 12px 'Mitr';opacity:.8}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
+  .card{background:var(--paper);border-radius:var(--r);box-shadow:var(--shadow)}
 
   /* wheel */
-  .wheel-title{display:flex;justify-content:space-between;align-items:center;padding:2px 6px 6px}
-  .tag{background:var(--rime);color:#fff;border-radius:12px;padding:4px 14px;font:700 20px 'Andika'}
+  .wheel-card{padding:14px 14px 8px}
+  .wheel-head{display:flex;justify-content:space-between;align-items:center;padding:0 6px 4px;font-size:13px;color:var(--muted)}
+  .legend{display:flex;gap:14px}
+  .legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
   svg{width:100%;height:auto;display:block}
-  .onset text, .word text{cursor:pointer}
-  .onset-letter{font:700 40px 'Andika';fill:var(--onset)}
-  .word-o{font:700 30px 'Andika';fill:var(--onset)}
-  .word-r{font:700 30px 'Andika';fill:var(--rime)}
+  .left-part{font-weight:700;font-family:'Andika'}
+  .left-part.o{fill:var(--onset)} .left-part.r{fill:var(--rime)}
+  .word-o{font-weight:700;font-family:'Andika';fill:var(--onset)}
+  .word-r{font-weight:700;font-family:'Andika';fill:var(--rime)}
   .hit{fill:transparent;cursor:pointer}
   .ln{stroke:var(--line);stroke-width:2;fill:none;transition:stroke .2s,stroke-width .2s}
-  .ln.on{stroke:var(--onset);stroke-width:4;stroke-dasharray:6 6;animation:dash 0.6s linear infinite}
+  .ln.on{stroke:var(--onset);stroke-width:4;stroke-dasharray:6 6;animation:dash .6s linear infinite}
   .ln.on.r{stroke:var(--rime)}
   @keyframes dash{to{stroke-dashoffset:-12}}
   .ring{fill:#fff;stroke:var(--ring);stroke-width:4}
+  .ring-bg{fill:#f1faf4}
   .ring.pulse{animation:pulse .5s ease}
   @keyframes pulse{50%{stroke-width:9}}
-  .rime-text{font:700 46px 'Andika';fill:var(--rime)}
-  .sel-bg{fill:#fff3c4;opacity:0;transition:opacity .2s}
+  .center-text{font-weight:700;font-family:'Andika'}
+  .center-text.r{fill:var(--rime)} .center-text.o{fill:var(--onset)}
+  .sel-bg{fill:var(--hl);opacity:0;transition:opacity .2s}
   .sel .sel-bg{opacity:1}
 
-  /* blend card */
-  .blend{text-align:center;padding:18px 10px}
-  .emoji{font-size:84px;line-height:1;height:96px}
-  .eq{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px 0 6px;flex-wrap:wrap}
-  .tile{min-width:64px;padding:6px 14px;border-radius:16px;font:700 44px 'Andika';background:#f3f5fb;transition:transform .2s, box-shadow .2s, background .2s}
-  .tile.o{color:var(--onset)} .tile.r{color:var(--rime)}
-  .tile.w{background:#fff7d6}
-  .tile.lit{transform:scale(1.15);box-shadow:0 0 0 4px currentColor inset;background:#fff}
-  .op{font:700 30px 'Andika';color:var(--muted)}
-  .thai{font-size:22px;margin-top:6px}
-  .hint{color:var(--muted);font-size:14px;margin-top:2px}
-  .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
-  .btn{border:none;border-radius:14px;padding:11px 16px;font:500 16px 'Mitr';cursor:pointer;background:var(--onset);color:#fff;box-shadow:var(--shadow)}
-  .btn.alt{background:var(--rime)} .btn.ghost{background:#f1edf6;color:var(--ink)}
-  .btn:disabled{opacity:.5}
-  .settings{margin-top:16px;border-top:1px dashed #e5dfd6;padding-top:12px;display:grid;gap:10px;font-size:14px}
-  .settings label{display:flex;align-items:center;gap:10px;justify-content:space-between}
+  /* word panel */
+  .word-card{padding:22px 18px 18px;text-align:center;position:sticky;top:20px}
+  .emoji{font-size:88px;line-height:1;height:100px;display:grid;place-items:center}
+  .eq{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 4px;flex-wrap:wrap}
+  .tile{min-width:58px;padding:4px 14px;border-radius:14px;font:700 42px 'Andika';transition:transform .2s, box-shadow .2s}
+  .tile.o{color:var(--onset);background:var(--onset-bg)} .tile.r{color:var(--rime);background:var(--rime-bg)}
+  .tile.w{background:var(--hl)}
+  .tile.lit{transform:scale(1.12);box-shadow:0 0 0 3px currentColor inset}
+  .op{font:700 26px 'Andika';color:#c9c2cf}
+  .thai{font-size:24px;font-weight:500;margin-top:10px}
+  .reading{color:var(--muted);font-size:14px;min-height:20px;font-weight:300}
+  .btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+  .btn{border:none;border-radius:14px;padding:12px 10px;font-size:15px;font-weight:500;cursor:pointer;color:#fff;background:var(--onset)}
+  .btn.alt{background:var(--rime)}
+  .btn.ghost{background:var(--soft);color:var(--ink)}
+  .btn:active{transform:translateY(1px)}
+  details.settings{margin-top:16px;text-align:left;border-top:1px solid var(--border);padding-top:10px}
+  details.settings summary{cursor:pointer;font-size:14px;color:var(--muted);list-style:none}
+  details.settings summary::before{content:"⚙️ "}
+  .set{display:grid;gap:10px;font-size:14px;margin-top:10px}
+  .set label{display:flex;align-items:center;gap:10px;justify-content:space-between}
   select,input[type=range]{font:inherit;max-width:60%}
   .warn{background:#fff1e6;border-radius:12px;padding:10px;font-size:14px;color:#9a4b12;display:none;margin-top:10px}
-  footer{text-align:center;color:var(--muted);font-size:13px;padding:6px 16px 24px}
+  .foot{color:var(--muted);font-size:12px;margin-top:18px;font-weight:300}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:980px){ .stage{grid-template-columns:1fr} .word-card{position:static} }
+  @media (max-width:820px){
+    .app{grid-template-columns:1fr}
+    aside{position:sticky;top:0;z-index:5;height:auto;padding:10px 10px 8px;border-right:none;border-bottom:1px solid var(--border)}
+    .brand{padding:0 4px 8px}.brand p{display:none}.brand h1{font-size:18px}
+    .nav{flex-direction:row;overflow-x:auto;gap:6px;scrollbar-width:none}
+    .nav::-webkit-scrollbar{display:none}
+    .nav button{width:auto;flex:none;padding:7px 10px;gap:8px}
+    .nav .num{width:24px;height:24px;font-size:12px}
+    .nav .ex{display:none}
+    .content{padding:16px 12px 30px}
+    .head h2{font-size:21px}
+    .row .lbl{display:none}
+  }
 </style>
 </head>
 <body>
-<header>
-  <h1>ฝึกสะกด <span class="latin">CVC</span> Word Families</h1>
-  <div class="sub">เลือกเสียงท้าย แล้วแตะพยัญชนะหรือคำ ระบบจะอ่านทีละส่วนแล้วรวมเป็นคำ: <span class="latin"><b style="color:var(--onset)">b</b> + <b style="color:var(--rime)">at</b> = bat</span></div>
-</header>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <h1>ฝึกสะกด <span class="latin">Phonics</span></h1>
+      <p>แตะคำ ฟังทีละเสียง แล้วรวมเป็นคำ</p>
+    </div>
+    <nav class="nav" id="nav"></nav>
+  </aside>
 
-<main>
-  <div class="vowels" id="vowels"></div>
-  <div class="families" id="families"></div>
-
-  <div class="grid">
-    <section class="card">
-      <div class="wheel-title">
-        <span class="tag latin" id="famTag">CVC word -at</span>
-        <span class="hint">แตะตัวอักษรหรือคำ</span>
+  <div class="content">
+    <div class="head">
+      <div>
+        <h2 id="catTitle"></h2>
+        <p id="catNote"></p>
       </div>
-      <svg id="wheel" aria-label="word family wheel"></svg>
-    </section>
+    </div>
 
-    <section class="card blend">
-      <div class="emoji" id="emoji">🦇</div>
-      <div class="eq">
-        <span class="tile o latin" id="tO">b</span><span class="op">+</span>
-        <span class="tile r latin" id="tR">at</span><span class="op">=</span>
-        <span class="tile w latin" id="tW"><span style="color:var(--onset)">b</span><span style="color:var(--rime)">at</span></span>
-      </div>
-      <div class="thai" id="thai">ค้างคาว</div>
-      <div class="hint" id="say">อ่านว่า: แบท</div>
+    <div class="toolbar">
+      <div class="row" id="subRow"><span class="lbl">กลุ่มเสียง</span><div class="seg" id="subs"></div></div>
+      <div class="row"><span class="lbl">กลุ่มคำ</span><div class="pills" id="families"></div></div>
+    </div>
 
-      <div class="btns">
-        <button class="btn" id="bSeg">🔊 อ่านแยกเสียง</button>
-        <button class="btn alt" id="bWord">🔊 อ่านทั้งคำ</button>
-        <button class="btn ghost" id="bAll">▶ อ่านทั้งกลุ่ม</button>
-        <button class="btn ghost" id="bStop">■ หยุด</button>
-      </div>
+    <div class="stage">
+      <section class="card wheel-card">
+        <div class="wheel-head">
+          <span>แตะตัวอักษรหรือคำเพื่อฟัง</span>
+          <span class="legend"><span style="--c:var(--onset)">ต้นคำ</span><span style="--c:var(--rime)">ท้ายคำ</span></span>
+        </div>
+        <svg id="wheel" aria-label="word family wheel"></svg>
+      </section>
 
-      <div class="settings">
-        <label>ความเร็ว <input type="range" id="rate" min="0.4" max="1.1" step="0.05" value="0.7"></label>
-        <label>เสียงพูดภาษาอังกฤษ <select id="voice"></select></label>
-        <label>อ่านความหมายภาษาไทยด้วย <input type="checkbox" id="thaiOn" checked></label>
-      </div>
-      <div class="warn" id="warn">อุปกรณ์นี้ไม่รองรับการอ่านออกเสียง ลองเปิดใน Chrome หรือ Safari</div>
-    </section>
+      <section class="card word-card">
+        <div class="emoji" id="emoji"></div>
+        <div class="eq">
+          <span class="tile o latin" id="tO"></span><span class="op">+</span>
+          <span class="tile r latin" id="tR"></span><span class="op">=</span>
+          <span class="tile w latin" id="tW"></span>
+        </div>
+        <div class="thai" id="thai"></div>
+        <div class="reading" id="say"></div>
+
+        <div class="btns">
+          <button class="btn" id="bSeg">🔊 อ่านแยกเสียง</button>
+          <button class="btn alt" id="bWord">🔊 อ่านทั้งคำ</button>
+          <button class="btn ghost" id="bAll">▶ อ่านทั้งกลุ่ม</button>
+          <button class="btn ghost" id="bStop">■ หยุด</button>
+        </div>
+
+        <details class="settings">
+          <summary>ตั้งค่าเสียง</summary>
+          <div class="set">
+            <label>ความเร็ว <input type="range" id="rate" min="0.4" max="1.1" step="0.05" value="0.7"></label>
+            <label>เสียงภาษาอังกฤษ <select id="voice"></select></label>
+            <label>อ่านคำแปลไทยด้วย <input type="checkbox" id="thaiOn" checked></label>
+          </div>
+        </details>
+        <div class="warn" id="warn">อุปกรณ์นี้ไม่รองรับการอ่านออกเสียง ลองเปิดใน Chrome หรือ Safari</div>
+        <div class="foot" id="foot">เสียงพยัญชนะมาจากไฟล์เสียงครู · เสียงท้ายคำและเสียงคำใช้เสียงอ่านของเครื่อง</div>
+      </section>
+    </div>
   </div>
-</main>
-<footer>เสียงมาจากระบบอ่านออกเสียงของเครื่อง จึงต่างกันไปตามอุปกรณ์ · ทำได้ดีที่สุดบน iPad / Safari หรือ Chrome</footer>
+</div>
 
 <script>
-// ---------- data ----------
-const ONSET_SOUND = {b:"buh",c:"kuh",d:"duh",f:"fuh",g:"guh",h:"huh",j:"juh",k:"kuh",l:"luh",m:"muh",n:"nuh",p:"puh",r:"ruh",s:"suh",t:"tuh",v:"vuh",w:"wuh",y:"yuh",z:"zuh"};
-const RIME_SOUND = {at:"at",an:"an",ap:"app",ag:"ag",ad:"add",en:"en",et:"et",ed:"ed",ig:"ig",in:"in",ip:"ip",it:"it",og:"og",op:"op",ot:"ot",ug:"ug",un:"un",ut:"utt"};
-const VOWELS = [
-  {v:"a",th:"สระ อะ แบบแอ",c:"var(--a)",fam:["at","an","ap","ag","ad"]},
-  {v:"e",th:"สระ เอะ",c:"var(--e)",fam:["en","et","ed"]},
-  {v:"i",th:"สระ อิ",c:"var(--i)",fam:["ig","in","ip","it"]},
-  {v:"o",th:"สระ เอาะ",c:"var(--o)",fam:["og","op","ot"]},
-  {v:"u",th:"สระ อะ",c:"var(--u)",fam:["ug","un","ut"]},
-];
-// [word, emoji, thai meaning, thai reading guide]
-const WORDS = {
-  at:[["bat","🦇","ค้างคาว","แบท"],["cat","🐱","แมว","แคท"],["hat","🎩","หมวก","แฮท"],["rat","🐀","หนู","แรท"],["mat","🧘","เสื่อ","แมท"],["fat","🐷","อ้วน","แฟท"],["sat","🪑","นั่งแล้ว","แซท"]],
-  an:[["can","🥫","กระป๋อง","แคน"],["fan","🪭","พัด","แฟน"],["man","👨","ผู้ชาย","แมน"],["pan","🍳","กระทะ","แพน"],["van","🚐","รถตู้","แวน"],["ran","🏃","วิ่งแล้ว","แรน"]],
-  ap:[["cap","🧢","หมวกแก๊ป","แคพ"],["map","🗺️","แผนที่","แมพ"],["nap","😴","งีบหลับ","แนพ"],["tap","🚰","ก๊อกน้ำ","แทพ"],["lap","🦵","ตัก","แลพ"],["zap","⚡","ช็อต","แซพ"]],
-  ag:[["bag","👜","กระเป๋า","แบก"],["tag","🏷️","ป้าย","แทก"],["rag","🧽","ผ้าขี้ริ้ว","แรก"],["wag","🐕","กระดิกหาง","แวก"]],
-  ad:[["dad","👨‍👧","พ่อ","แดด"],["sad","😢","เศร้า","แซด"],["mad","😠","โกรธ","แมด"],["pad","📝","สมุดฉีก","แพด"],["bad","👎","ไม่ดี","แบด"]],
-  en:[["hen","🐔","แม่ไก่","เฮน"],["pen","🖊️","ปากกา","เพน"],["ten","🔟","สิบ","เทน"],["men","👬","ผู้ชายหลายคน","เมน"],["den","🦊","โพรงสัตว์","เดน"]],
-  et:[["net","🥅","ตาข่าย","เนท"],["pet","🐶","สัตว์เลี้ยง","เพท"],["wet","💧","เปียก","เวท"],["jet","✈️","เครื่องบินเจ็ท","เจท"],["vet","🩺","สัตวแพทย์","เวท"]],
-  ed:[["bed","🛏️","เตียง","เบด"],["red","🔴","สีแดง","เรด"],["fed","🍼","ป้อนอาหารแล้ว","เฟด"],["wed","💒","แต่งงาน","เวด"]],
-  ig:[["pig","🐷","หมู","พิก"],["wig","💇","วิกผม","วิก"],["dig","⛏️","ขุด","ดิก"],["big","🐘","ใหญ่","บิก"],["fig","🟣","ลูกมะเดื่อ","ฟิก"]],
-  in:[["pin","📌","เข็มหมุด","พิน"],["bin","🗑️","ถังขยะ","บิน"],["fin","🦈","ครีบปลา","ฟิน"],["win","🏆","ชนะ","วิน"],["tin","🥫","กระป๋อง","ทิน"]],
-  ip:[["lip","👄","ริมฝีปาก","ลิพ"],["sip","🥤","จิบ","ซิพ"],["zip","🤐","ซิป","ซิพ"],["dip","🥣","จุ่ม","ดิพ"],["hip","🕺","สะโพก","ฮิพ"]],
-  it:[["sit","🪑","นั่ง","ซิท"],["hit","🏏","ตี","ฮิท"],["kit","🧰","ชุดอุปกรณ์","คิท"],["fit","💪","แข็งแรง","ฟิท"],["bit","🍪","ชิ้นเล็กๆ","บิท"]],
-  og:[["dog","🐶","สุนัข","ดอก"],["log","🪵","ท่อนไม้","ลอก"],["fog","🌫️","หมอก","ฟอก"],["hog","🐗","หมูป่า","ฮอก"],["jog","🏃","วิ่งเหยาะๆ","จอก"]],
-  op:[["hop","🐇","กระโดด","ฮอพ"],["mop","🧹","ไม้ถูพื้น","มอพ"],["top","🔝","ด้านบน","ทอพ"],["pop","🎈","ระเบิดดังป๊อป","พอพ"],["cop","👮","ตำรวจ","คอพ"]],
-  ot:[["hot","🔥","ร้อน","ฮอท"],["pot","🍲","หม้อ","พอท"],["dot","⚫","จุด","ดอท"],["cot","🛏️","เตียงเด็ก","คอท"],["not","🚫","ไม่","นอท"]],
-  ug:[["bug","🐛","แมลง","บัก"],["hug","🤗","กอด","ฮัก"],["mug","☕","แก้วมัค","มัก"],["rug","🟫","พรม","รัก"],["jug","🫗","เหยือก","จัก"]],
-  un:[["sun","☀️","ดวงอาทิตย์","ซัน"],["bun","🍞","ขนมปัง","บัน"],["run","🏃","วิ่ง","รัน"],["fun","🎉","สนุก","ฟัน"]],
-  ut:[["nut","🥜","ถั่ว","นัท"],["hut","🛖","กระท่อม","ฮัท"],["cut","✂️","ตัด","คัท"]],
+// ================= SOUNDS =================
+// single sound units: [recorded clip in ../sounds/, TTS fallback]
+const UNIT = {
+  b:["b","buh"],c:["c","kuh"],d:["d","duh"],f:["f","fuh"],g:["g","guh"],h:["h","huh"],j:["j","juh"],k:["k","kuh"],
+  l:["l","luh"],m:["m","muh"],n:["n","nuh"],p:["p","puh"],r:["r","ruh"],s:["s","suh"],t:["t","tuh"],v:["v","vuh"],
+  w:["w","wuh"],y:["y","yuh"],z:["z","zuh"],
+  sh:["sh","shh"],ch:["ch","chuh"],th:["th","thuh"],wh:["w","wuh"],ph:["f","fuh"],qu:["qu","kwuh"]
 };
+const DIGRAPHS=["sh","ch","th","wh","ph","qu"];
+function onsetUnits(s){ const out=[]; let i=0;
+  while(i<s.length){ const two=s.slice(i,i+2); if(DIGRAPHS.includes(two)){out.push(two);i+=2;} else {out.push(s[i]);i++;} }
+  return out; }
+// how the TTS should say an ending / rime chunk (default: the chunk itself)
+const SAY = {ap:"app",ad:"add",ut:"utt",oe:"oo",eese:"eez",ale:"ail",ite:"ight",one:"ohn",oto:"oh toe",ue:"oo",ow:"oh",
+  y:"eye",ute:"oot",ove:"uv",obe:"ohb",ane:"ain",ead:"ed",own:"oun",ize:"eyes",i:"ee",ider:"eye der",ar:"are",ile:"isle",
+  ee:"e",ea:"e",eet:"eat",ell:"el",ail:"ale",ay:"a",ouse:"owss",oud:"owd",ird:"erd",irt:"ert",urn:"earn",urse:"erse",uit:"oot",ree:"ree"};
+const say=chunk=>SAY[chunk]||chunk;
 
-// ---------- state ----------
-let vIdx=0, fam="at", wIdx=0, runId=0;
+// ================= DATA =================
+// family: {c: centre chunk, type:"r" (centre = ending, left = beginnings) | "o" (centre = beginning, left = endings), w:[[left, emoji, thai, (thai reading)]]}
+const R=(c,w,extra={})=>Object.assign({c,type:"r",w},extra);
+const O=(c,w,extra={})=>Object.assign({c,type:"o",w},extra);
+
+const CATS = [
+ {t:"CVC 3 ตัว",ex:"cat · pig · sun", note:"พยัญชนะ + สระ + พยัญชนะ อ่านทีละเสียงแล้วรวมเป็นคำ", subs:[
+  {name:"<b>a</b>แอะ",c:"var(--a)",fams:[
+   R("at",[["b","🦇","ค้างคาว","แบท"],["c","🐱","แมว","แคท"],["h","🎩","หมวก","แฮท"],["r","🐀","หนู","แรท"],["m","🚪","พรมเช็ดเท้า","แมท"]]),
+   R("an",[["c","🥫","กระป๋อง","แคน"],["f","🪭","พัด","แฟน"],["m","👨","ผู้ชาย","แมน"],["p","🍳","กระทะ","แพน"],["v","🚐","รถตู้","แวน"]]),
+   R("ap",[["c","🧢","หมวกแก๊ป","แคพ"],["m","🗺️","แผนที่","แมพ"],["n","😴","งีบหลับ","แนพ"],["t","🚰","ก๊อกน้ำ","แทพ"],["l","🦵","ตัก","แลพ"],["g","↔️","ช่องว่าง","แกพ"]]),
+   R("ag",[["b","👜","กระเป๋า","แบก"],["t","🏷️","ป้าย","แทก"],["r","🧹","ผ้าขี้ริ้ว","แรก"],["w","🐕","กระดิกหาง","แวก"]]),
+   R("ad",[["d","👨‍👧","พ่อ","แดด"],["s","😢","เศร้า","แซด"],["m","😠","โกรธ","แมด"],["p","📝","แผ่นรอง","แพด"],["b","👎","ไม่ดี","แบด"]])]},
+  {name:"<b>e</b>เอะ",c:"var(--e)",fams:[
+   R("en",[["h","🐔","แม่ไก่","เฮน"],["p","🖊️","ปากกา","เพน"],["t","🔟","สิบ","เทน"],["m","👬","ผู้ชายหลายคน","เมน"],["d","🦊","โพรงสัตว์","เดน"]]),
+   R("et",[["n","🥅","ตาข่าย","เนท"],["p","🐶","สัตว์เลี้ยง","เพท"],["w","💧","เปียก","เวท"],["j","✈️","เครื่องบินเจ็ท","เจท"],["v","🩺","สัตวแพทย์","เวท"]]),
+   R("ed",[["b","🛏️","เตียง","เบด"],["r","🔴","สีแดง","เรด"]])]},
+  {name:"<b>i</b>อิ",c:"var(--i)",fams:[
+   R("ig",[["p","🐷","หมู","พิก"],["w","💇","วิกผม","วิก"],["d","⛏️","ขุด","ดิก"],["b","🐘","ใหญ่","บิก"],["f","🟣","ลูกมะเดื่อ","ฟิก"]]),
+   R("in",[["p","📌","เข็มหมุด","พิน"],["b","🗑️","ถังขยะ","บิน"],["f","🦈","ครีบปลา","ฟิน"],["w","🏆","ชนะ","วิน"],["t","🥫","กระป๋อง","ทิน"]]),
+   R("ip",[["l","👄","ริมฝีปาก","ลิพ"],["s","🥤","จิบ","ซิพ"],["z","🤐","ซิป","ซิพ"],["d","🥣","จุ่ม","ดิพ"],["h","🕺","สะโพก","ฮิพ"]]),
+   R("it",[["s","🪑","นั่ง","ซิท"],["h","🏏","ตี","ฮิท"],["k","🧰","ชุดอุปกรณ์","คิท"],["f","👖","พอดี","ฟิท"]])]},
+  {name:"<b>o</b>เอาะ",c:"var(--o)",fams:[
+   R("og",[["d","🐶","สุนัข","ดอก"],["l","🪵","ท่อนไม้","ลอก"],["f","🌫️","หมอก","ฟอก"],["h","🐖","หมูตัวใหญ่","ฮอก"],["j","🏃","วิ่งเหยาะๆ","จอก"]]),
+   R("op",[["h","🐇","กระโดด","ฮอพ"],["m","🧹","ไม้ถูพื้น","มอพ"],["t","🔝","ด้านบน","ทอพ"],["p","🎈","แตกดังป๊อป","พอพ"],["c","👮","ตำรวจ","คอพ"]]),
+   R("ot",[["h","🔥","ร้อน","ฮอท"],["p","🍲","หม้อ","พอท"],["d","⚫","จุด","ดอท"],["c","🛏️","เตียงเด็ก","คอท"]])]},
+  {name:"<b>u</b>อะ",c:"var(--u)",fams:[
+   R("ug",[["b","🐛","แมลง","บัก"],["h","🤗","กอด","ฮัก"],["m","☕","แก้วมัค","มัก"],["r","🟫","พรม","รัก"],["j","🫗","เหยือก","จัก"]]),
+   R("un",[["s","☀️","ดวงอาทิตย์","ซัน"],["b","🍞","ขนมปัง","บัน"],["r","🏃","วิ่ง","รัน"],["f","🎉","สนุก","ฟัน"]]),
+   R("ut",[["n","🥜","ถั่ว","นัท"],["h","🛖","กระท่อม","ฮัท"],["c","✂️","ตัด","คัท"]])]}
+ ]},
+
+ {t:"2 ตัว 1 เสียง ต้นคำ",ex:"sh · ch · th · wh", note:"อักษร 2 ตัวต้นคำ ออกเสียงเดียว (digraph)", subs:[{fams:[
+   O("sh",[["ip","🚢","เรือ"],["op","🏪","ร้านค้า"],["ell","🐚","เปลือกหอย"],["eep","🐑","แกะ"],["ark","🦈","ฉลาม"],["irt","👕","เสื้อเชิ้ต"],["oe","👟","รองเท้า"]]),
+   O("ch",[["ip","🥔","มันฝรั่งแผ่น"],["in","🧔","คาง"],["ick","🐥","ลูกไก่"],["eek","😊","แก้ม"],["air","🪑","เก้าอี้"],["eese","🧀","ชีส"]]),
+   O("th",[["in","🥢","บาง"],["ick","📚","หนา"],["ree","3️⃣","สาม"],["ink","🤔","คิด"],["orn","🌹","หนาม"]]),
+   O("wh",[["ale","🐋","ปลาวาฬ"],["eel","🛞","ล้อ"],["isk","🥣","ตะกร้อตีไข่"],["ite","⚪","สีขาว"]]),
+   O("ph",[["one","📱","โทรศัพท์"],["oto","📷","รูปถ่าย"]]),
+   O("qu",[["een","👸","ราชินี"],["ilt","🛏️","ผ้านวม"],["iz","❓","แบบทดสอบ"],["ack","🦆","เสียงเป็ดร้อง"]])]}]},
+
+ {t:"เสียงท้ายคำ",ex:"ck · ng · nk", note:"เสียงท้ายคำ: ck = ค · ng = ง · nk = งค์", subs:[{fams:[
+   R("ack",[["b","🔙","ข้างหลัง"],["p","🎒","จัดกระเป๋า"],["sn","🍪","ขนม"],["bl","🖤","สีดำ"],["tr","🛤️","รางรถไฟ"]]),
+   R("ick",[["k","⚽","เตะ"],["s","🤒","ป่วย"],["l","👅","เลีย"],["ch","🐥","ลูกไก่"],["br","🧱","อิฐ"],["st","🪵","กิ่งไม้"]]),
+   R("ock",[["s","🧦","ถุงเท้า"],["r","🪨","ก้อนหิน"],["l","🔒","แม่กุญแจ"],["cl","🕐","นาฬิกา"]]),
+   R("uck",[["d","🦆","เป็ด"],["l","🍀","โชค"],["tr","🚚","รถบรรทุก"]]),
+   R("eck",[["n","🦒","คอ"],["ch","✅","ตรวจ"]]),
+   R("ing",[["k","🤴","พระราชา"],["r","💍","แหวน"],["w","🪽","ปีก"],["s","🎤","ร้องเพลง"],["sw","🛝","ชิงช้า"]]),
+   R("ong",[["s","🎵","เพลง"],["l","📏","ยาว"],["g","🔔","ฆ้อง"]]),
+   R("ank",[["b","🏦","ธนาคาร"],["t","🛢️","ถัง"],["th","🙏","ขอบคุณ"]]),
+   R("ink",[["p","🩷","สีชมพู"],["s","🧼","อ่างล้างมือ"],["w","😉","ขยิบตา"],["dr","🥤","ดื่ม"],["th","🤔","คิด"]]),
+   R("unk",[["tr","🐘","งวงช้าง"],["sk","🦨","ตัวสกังก์"]])]}]},
+
+ {t:"ตัวอักษรซ้ำ",ex:"ll · ss", note:"ตัวอักษรซ้ำ 2 ตัว ออกเสียงเดียว", subs:[{fams:[
+   R("ell",[["b","🔔","กระดิ่ง"],["sh","🐚","เปลือกหอย"],["w","🪣","บ่อน้ำ"],["sm","👃","ได้กลิ่น"],["y","📢","ตะโกน"]]),
+   R("ill",[["h","⛰️","เนินเขา"],["p","💊","ยาเม็ด"],["sp","🫗","ทำหก"],["gr","🍖","เตาปิ้งย่าง"],["dr","🔧","สว่าน"]]),
+   R("all",[["b","⚽","ลูกบอล"],["w","🧱","กำแพง"],["t","🦒","สูง"],["f","🍂","ตก / ร่วง"],["sm","🐜","เล็ก"]]),
+   R("oll",[["d","🪆","ตุ๊กตา"],["r","🧻","ม้วน"]]),
+   R("ess",[["dr","👗","ชุดกระโปรง"],["ch","♟️","หมากรุก"]])]}]},
+
+ {t:"Blend ต้นคำ",ex:"bl · tr · st", note:"blend: 2 ตัวอักษร ออก 2 เสียงชิดกัน (เช่น b + l)", subs:[
+  {name:"<b>l</b> blends",c:"var(--i)",fams:[
+   O("bl",[["ack","🖤","สีดำ"],["ue","🔵","สีน้ำเงิน"],["ock","🧱","ตัวต่อ"],["ow","🌬️","เป่า"]]),
+   O("cl",[["ap","👏","ปรบมือ"],["ock","🕐","นาฬิกา"],["oud","☁️","เมฆ"],["aw","🦀","ก้าม"],["ip","📎","คลิปหนีบ"]]),
+   O("fl",[["ag","🚩","ธง"],["y","🕊️","บิน"],["ower","🌸","ดอกไม้"],["ute","🪈","ขลุ่ย"]]),
+   O("gl",[["ove","🧤","ถุงมือ"],["ue","🧴","กาว"],["ad","😊","ดีใจ"],["obe","🌍","ลูกโลก"]]),
+   O("pl",[["um","🟣","ลูกพลัม"],["ant","🌱","ต้นไม้"],["ate","🍽️","จาน"],["ane","✈️","เครื่องบิน"],["ay","🎮","เล่น"]]),
+   O("sl",[["ed","🛷","เลื่อนหิมะ"],["ide","🛝","สไลเดอร์"],["eep","😴","นอนหลับ"],["ow","🐢","ช้า"]])]},
+  {name:"<b>r</b> blends",c:"var(--a)",fams:[
+   O("br",[["ead","🍞","ขนมปัง"],["ush","🖌️","แปรง"],["oom","🧹","ไม้กวาด"],["ick","🧱","อิฐ"]]),
+   O("cr",[["ab","🦀","ปู"],["own","👑","มงกุฎ"],["ow","🐦‍⬛","อีกา"],["y","😭","ร้องไห้"]]),
+   O("dr",[["um","🥁","กลอง"],["ess","👗","ชุดกระโปรง"],["ink","🥤","ดื่ม"],["op","💧","หยด"]]),
+   O("fr",[["og","🐸","กบ"],["uit","🍎","ผลไม้"],["y","🍳","ทอด"],["idge","🧊","ตู้เย็น"]]),
+   O("gr",[["ape","🍇","องุ่น"],["een","🟢","สีเขียว"],["ow","🌱","เติบโต"],["in","😁","ยิ้มกว้าง"]]),
+   O("pr",[["ize","🏆","รางวัล"],["int","🖨️","พิมพ์"],["ince","🤴","เจ้าชาย"]]),
+   O("tr",[["ain","🚆","รถไฟ"],["ee","🌳","ต้นไม้"],["uck","🚚","รถบรรทุก"],["ip","🧳","การเดินทาง"]])]},
+  {name:"<b>s</b> blends",c:"var(--o)",fams:[
+   O("sk",[["ate","⛸️","สเก็ต"],["i","🎿","สกี"],["unk","🦨","ตัวสกังก์"],["ip","🦘","กระโดดสลับเท้า"]]),
+   O("sn",[["ail","🐌","หอยทาก"],["ake","🐍","งู"],["ow","❄️","หิมะ"],["ack","🍪","ขนม"]]),
+   O("sp",[["oon","🥄","ช้อน"],["ider","🕷️","แมงมุม"],["in","🌀","หมุน"]]),
+   O("st",[["ar","⭐","ดาว"],["op","🛑","หยุด"],["amp","✉️","แสตมป์"],["one","🪨","ก้อนหิน"]]),
+   O("sw",[["im","🏊","ว่ายน้ำ"],["an","🦢","หงส์"],["ing","🛝","ชิงช้า"],["eet","🍬","หวาน"]]),
+   O("sm",[["ile","😊","ยิ้ม"],["ell","👃","ได้กลิ่น"],["all","🐜","เล็ก"]])]},
+  {name:"<b>tw</b>",c:"var(--u)",fams:[
+   O("tw",[["in","👯","ฝาแฝด"],["ig","🌿","กิ่งไม้เล็ก"],["elve","🕛","สิบสอง"]])]}
+ ]},
+
+ {t:"Blend ท้ายคำ",ex:"st · nd · mp", note:"blend ท้ายคำ: 2 เสียงชิดกัน (เช่น s + t)", subs:[{fams:[
+   R("est",[["n","🪺","รังนก"],["v","🦺","เสื้อกั๊ก"],["ch","📦","หีบ"],["t","📝","การสอบ"]]),
+   R("and",[["h","✋","มือ"],["s","🏖️","ทราย"],["b","🎸","วงดนตรี"],["st","🧍","ยืน"]]),
+   R("ent",[["t","⛺","เต็นท์"],["c","🪙","เหรียญเซ็นต์"]]),
+   R("ump",[["j","🦘","กระโดด"],["b","🤕","ชน"],["p","⛽","ปั๊ม"],["st","🪵","ตอไม้"]]),
+   R("amp",[["l","💡","โคมไฟ"],["c","🏕️","ค่าย"],["st","✉️","แสตมป์"],["r","♿","ทางลาด"]]),
+   R("ift",[["g","🎁","ของขวัญ"],["l","🛗","ลิฟต์"]]),
+   R("ilk",[["m","🥛","นม"],["s","🧣","ผ้าไหม"]]),
+   R("elt",[["b","👖","เข็มขัด"],["m","🫠","ละลาย"]])]}]},
+
+ {t:"สระคู่",ex:"ee · ai · oa · ow", note:"สระ 2 ตัวรวมกัน ออกเสียงเดียว", subs:[
+  {name:"<b>ee ea</b>อี",c:"var(--i)",fams:[
+   R("ee",[["b","🐝","ผึ้ง"],["s","👀","มองเห็น"],["tr","🌳","ต้นไม้"],["thr","3️⃣","สาม"]]),
+   R("eep",[["sh","🐑","แกะ"],["sl","😴","นอนหลับ"],["j","🚙","รถจี๊ป"]]),
+   R("eet",[["f","🦶","เท้า (หลายข้าง)"],["sw","🍬","หวาน"],["sh","📄","แผ่นกระดาษ"],["str","🛣️","ถนน"]]),
+   R("ea",[["s","🌊","ทะเล"],["t","🍵","ชา"],["p","🫛","ถั่วลันเตา"]]),
+   R("eat",[["m","🥩","เนื้อสัตว์"],["s","💺","ที่นั่ง"],["wh","🌾","ข้าวสาลี"],["h","🔥","ความร้อน"]])]},
+  {name:"<b>ai ay</b>เอ",c:"var(--a)",fams:[
+   R("ain",[["r","🌧️","ฝน"],["tr","🚆","รถไฟ"],["ch","⛓️","โซ่"]]),
+   R("ail",[["t","🐒","หาง"],["n","💅","เล็บ"],["sn","🐌","หอยทาก"],["m","📬","จดหมาย"],["s","⛵","ใบเรือ"]]),
+   R("ay",[["d","🌤️","วัน (กลางวัน)"],["h","🌾","ฟาง"],["pl","🎮","เล่น"],["tr","🍽️","ถาด"],["gr","🩶","สีเทา"]])]},
+  {name:"<b>oa ow</b>โอ",c:"var(--o)",fams:[
+   R("oat",[["b","⛵","เรือ"],["c","🧥","เสื้อโค้ท"],["g","🐐","แพะ"],["fl","🛟","ลอย"]]),
+   R("ow",[["sn","❄️","หิมะ"],["b","🎀","โบว์"],["cr","🐦‍⬛","อีกา"],["gr","🌱","เติบโต"],["bl","🌬️","เป่า"]],{label:"โอ",say:"oh"})]},
+  {name:"<b>oo</b>อู / อุ",c:"var(--e)",fams:[
+   R("oon",[["m","🌙","ดวงจันทร์"],["sp","🥄","ช้อน"],["n","🕛","เที่ยงวัน"]]),
+   R("ook",[["b","📖","หนังสือ"],["c","👩‍🍳","ทำอาหาร"],["l","👀","ดู"],["h","🪝","ตะขอ"]])]},
+  {name:"<b>oy oi</b>ออย",c:"var(--u)",fams:[
+   R("oy",[["b","👦","เด็กผู้ชาย"],["t","🧸","ของเล่น"],["j","😄","ความสุข"]]),
+   R("oil",[["b","♨️","ต้ม"],["s","🪴","ดิน"],["c","🌀","ขด"]])]},
+  {name:"<b>ow ou</b>อาว",c:"var(--rime)",fams:[
+   R("own",[["d","⬇️","ลง"],["cl","🤡","ตัวตลก"],["cr","👑","มงกุฎ"],["br","🟤","สีน้ำตาล"]]),
+   R("ouse",[["h","🏠","บ้าน"],["m","🐭","หนู"]]),
+   R("oud",[["cl","☁️","เมฆ"],["l","📢","เสียงดัง"],["pr","😌","ภูมิใจ"]])]},
+  {name:"<b>aw</b>ออ",c:"var(--onset)",fams:[
+   R("aw",[["s","🪚","เลื่อย"],["p","🐾","อุ้งเท้าสัตว์"],["cl","🦀","ก้าม"],["str","🥤","หลอดดูด"],["dr","✏️","วาดรูป"]])]}
+ ]},
+
+ {t:"สระ + r",ex:"ar · or · ir", note:"สระตามด้วย r เปลี่ยนเสียงสระ · er ir ur ออกเสียงเดียวกัน (เออร์)", subs:[{fams:[
+   R("ar",[["c","🚗","รถยนต์"],["j","🫙","โหล"],["st","⭐","ดาว"],["b","🍫","แท่ง"]]),
+   R("ark",[["sh","🦈","ฉลาม"],["p","🏞️","สวนสาธารณะ"],["d","🌑","มืด"],["b","🐕","เห่า"]]),
+   R("orn",[["c","🌽","ข้าวโพด"],["h","📯","แตร"],["th","🌹","หนาม"]]),
+   R("ork",[["f","🍴","ส้อม"],["p","🥓","เนื้อหมู"],["st","🦩","นกกระสา"]]),
+   R("ird",[["b","🐦","นก"],["th","🥉","ที่สาม"]]),
+   R("irt",[["sh","👕","เสื้อเชิ้ต"],["sk","👗","กระโปรง"],["d","🟫","ดิน / สิ่งสกปรก"]]),
+   R("urn",[["t","↪️","เลี้ยว"],["b","🔥","ไหม้"]]),
+   R("urse",[["n","👩‍⚕️","พยาบาล"],["p","👛","กระเป๋าสตางค์"]])]}]}
+];
+
+
+// ================= STATE =================
+let cIdx=0, sIdx=0, fIdx=0, wIdx=0, runId=0;
 const $=id=>document.getElementById(id);
+const curFam=()=>CATS[cIdx].subs[sIdx].fams[fIdx];
+function parts(f,w){ return f.type==="r" ? {on:w[0], rime:f.c, word:w[0]+f.c} : {on:f.c, rime:w[0], word:f.c+w[0]}; }
 
-// ---------- speech ----------
+// ================= AUDIO =================
 const synth = window.speechSynthesis;
-let enVoice=null, thVoice=null;
+const useClips = /github\.io$/.test(location.hostname);
+let enVoice=null, thVoice=null, curAudio=null;
 function loadVoices(){
   if(!synth) return;
   const vs = synth.getVoices();
   const en = vs.filter(v=>/^en/i.test(v.lang));
   thVoice = vs.find(v=>/^th/i.test(v.lang)) || null;
   const sel=$("voice"); const keep=sel.value; sel.innerHTML="";
-  en.forEach((v,i)=>{const o=document.createElement("option");o.value=v.name;o.textContent=v.name+" ("+v.lang+")";sel.appendChild(o);});
+  en.forEach(v=>{const o=document.createElement("option");o.value=v.name;o.textContent=v.name+" ("+v.lang+")";sel.appendChild(o);});
   const pref = en.find(v=>v.name===keep) || en.find(v=>/Samantha|Google US English|Aria|Jenny/i.test(v.name)) || en.find(v=>/en-US/i.test(v.lang)) || en[0];
   if(pref){sel.value=pref.name; enVoice=pref;}
 }
 if(synth){ loadVoices(); synth.onvoiceschanged=loadVoices; } else { $("warn").style.display="block"; }
 $("voice").onchange=e=>{enVoice=synth.getVoices().find(v=>v.name===e.target.value)||enVoice;};
+if(!useClips) $("foot").textContent="ตัวอย่างนี้ใช้เสียงอ่านของเครื่องทั้งหมด · บน doglikejack.github.io เสียงพยัญชนะจะใช้ไฟล์เสียงครู";
 
 function speak(text, lang="en", rateMul=1){
   return new Promise(res=>{
@@ -186,70 +386,117 @@ function speak(text, lang="en", rateMul=1){
     u.onend=res; u.onerror=res; synth.speak(u);
   });
 }
+function playClip(name){
+  return new Promise((res,rej)=>{
+    const a=new Audio("../sounds/"+name+".mp3"); curAudio=a;
+    a.onended=()=>res(); a.onerror=()=>rej(); a.play().catch(rej);
+  });
+}
+async function playUnit(u){
+  const s=UNIT[u]; if(!s) return speak(u);
+  if(useClips){ try{ await playClip(s[0]); return; }catch(e){} }
+  return speak(s[1]);
+}
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-function stopAll(){ runId++; if(synth) synth.cancel(); clearLit(); }
+async function playOnset(on,id){
+  const us=onsetUnits(on);
+  for(let i=0;i<us.length;i++){ await playUnit(us[i]); if(id!==runId) return; if(i<us.length-1) await wait(150); }
+}
+function stopAll(){ runId++; if(synth) synth.cancel(); if(curAudio){curAudio.pause();curAudio=null;} clearLit(); }
 
-// ---------- render pickers ----------
-function renderVowels(){
-  const box=$("vowels"); box.innerHTML="";
-  VOWELS.forEach((v,i)=>{
+// ================= RENDER =================
+function renderNav(){
+  const box=$("nav"); box.innerHTML="";
+  CATS.forEach((c,i)=>{
     const b=document.createElement("button");
-    b.className="vbtn"+(i===vIdx?" on":""); if(i===vIdx) b.style.background=v.c;
-    b.innerHTML=`<b>${v.v}</b>${v.th}`;
-    b.onclick=()=>{stopAll();vIdx=i;fam=v.fam[0];wIdx=0;renderAll();};
+    if(i===cIdx) b.className="on";
+    b.innerHTML=`<span class="num">${i+1}</span><span class="txt"><span class="t">${c.t}</span><span class="ex">${c.ex}</span></span>`;
+    b.onclick=()=>{stopAll();cIdx=i;sIdx=0;fIdx=0;wIdx=0;renderAll();b.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});};
+    box.appendChild(b);
+  });
+  $("catTitle").textContent=CATS[cIdx].t;
+  $("catNote").textContent=CATS[cIdx].note||"";
+}
+function renderSubs(){
+  const box=$("subs"); box.innerHTML="";
+  const subs=CATS[cIdx].subs;
+  $("subRow").classList.toggle("hidden",subs.length<2);
+  $("subRow").style.display = subs.length<2 ? "none" : "";
+  subs.forEach((s,i)=>{
+    const b=document.createElement("button");
+    if(i===sIdx) b.className="on";
+    b.style.setProperty("--c",s.c||"var(--muted)");
+    b.innerHTML=`<span class="dot"></span>${s.name}`;
+    b.onclick=()=>{stopAll();sIdx=i;fIdx=0;wIdx=0;renderAll();};
     box.appendChild(b);
   });
 }
+function famLabel(f){ return f.type==="r" ? "-"+f.c : f.c+"-"; }
 function renderFamilies(){
   const box=$("families"); box.innerHTML="";
-  VOWELS[vIdx].fam.forEach(f=>{
+  CATS[cIdx].subs[sIdx].fams.forEach((f,i)=>{
     const b=document.createElement("button");
-    b.className="fbtn"+(f===fam?" on":""); b.textContent="-"+f;
-    b.onclick=()=>{stopAll();fam=f;wIdx=0;renderAll();};
+    b.className="pill"+(f.type==="o"?" o":"")+(i===fIdx?" on":"");
+    b.innerHTML=famLabel(f)+(f.label?` <small>${f.label}</small>`:"");
+    b.onclick=()=>{stopAll();fIdx=i;wIdx=0;renderAll();};
     box.appendChild(b);
   });
 }
+const sizeBy=(len,table)=>table[Math.min(len,table.length)-1];
 
-// ---------- wheel (like the paper chart) ----------
 function renderWheel(){
-  const list=WORDS[fam], n=list.length, gap=78, top=50;
-  const H=Math.max(top*2+(n-1)*gap, 360), W=640, cx=320, cy=H/2, R=72;
+  const f=curFam(), list=f.w, n=list.length, gap=76, top=48;
+  const H=Math.max(top*2+(n-1)*gap, 340), W=640, cx=320, cy=H/2, Rr=74;
   const svg=$("wheel"); svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const leftCls = f.type==="r" ? "o" : "r";
+  const centerCls = f.type==="r" ? "r" : "o";
+  const yOf=i=>top+i*gap+(H-(top*2+(n-1)*gap))/2;
+  // CVC-style (type r): parts left, words right. Onset-centre (type o): words left, parts right,
+  // so the centre (e.g. qu) is read first and its ending follows to the right.
+  const flip = f.type==="o";
+  const P = flip ? {cx:575, bx:528, bw:94,  edge:526} : {cx:63,  bx:18,  bw:90,  edge:108};
+  const Wd= flip ? {cx:75,  bx:8,   bw:134, edge:144} : {cx:565, bx:498, bw:134, edge:494};
   let s="";
   list.forEach((w,i)=>{
-    const y=top+i*gap+(H-(top*2+(n-1)*gap))/2;
-    const a1=Math.atan2(y-cy,95-cx), a2=Math.atan2(y-cy,505-cx);
-    s+=`<path class="ln" id="lnL${i}" d="M 95 ${y} L ${(cx+R*Math.cos(a1)).toFixed(1)} ${(cy+R*Math.sin(a1)).toFixed(1)}"/>`;
-    s+=`<path class="ln r" id="lnR${i}" d="M ${(cx+R*Math.cos(a2)).toFixed(1)} ${(cy+R*Math.sin(a2)).toFixed(1)} L 505 ${y}"/>`;
+    const y=yOf(i);
+    const a1=Math.atan2(y-cy,P.edge-cx), a2=Math.atan2(y-cy,Wd.edge-cx);
+    s+=`<path class="ln" id="lnL${i}" d="M ${P.edge} ${y} L ${(cx+Rr*Math.cos(a1)).toFixed(1)} ${(cy+Rr*Math.sin(a1)).toFixed(1)}"/>`;
+    s+=`<path class="ln r" id="lnR${i}" d="M ${(cx+Rr*Math.cos(a2)).toFixed(1)} ${(cy+Rr*Math.sin(a2)).toFixed(1)} L ${Wd.edge} ${y}"/>`;
   });
-  s+=`<circle class="ring" id="ring" cx="${cx}" cy="${cy}" r="${R}"/>`;
-  s+=`<text class="rime-text" id="rimeTxt" x="${cx}" y="${cy+16}" text-anchor="middle">${fam}</text>`;
-  s+=`<rect class="hit" x="${cx-R}" y="${cy-R}" width="${R*2}" height="${R*2}" data-rime="1"/>`;
+  const cfs=sizeBy(f.c.length,[52,48,40,34]);
+  s+=`<circle class="ring-bg" cx="${cx}" cy="${cy}" r="${Rr+14}"/>`;
+  s+=`<circle class="ring" id="ring" cx="${cx}" cy="${cy}" r="${Rr}"/>`;
+  s+=`<text class="center-text ${centerCls}" x="${cx}" y="${cy+cfs*0.35}" text-anchor="middle" font-size="${cfs}">${f.c}</text>`;
+  s+=`<rect class="hit" x="${cx-Rr}" y="${cy-Rr}" width="${Rr*2}" height="${Rr*2}" data-center="1"/>`;
   list.forEach((w,i)=>{
-    const y=top+i*gap+(H-(top*2+(n-1)*gap))/2, on=w[0].slice(0,1);
-    s+=`<g class="onset${i===wIdx?' sel':''}" data-i="${i}" data-part="o"><rect class="sel-bg" x="28" y="${y-32}" width="62" height="60" rx="14"/><text class="onset-letter" x="59" y="${y+14}" text-anchor="middle">${on}</text><rect class="hit" x="20" y="${y-34}" width="80" height="66"/></g>`;
-    s+=`<g class="word${i===wIdx?' sel':''}" data-i="${i}" data-part="w"><rect class="sel-bg" x="510" y="${y-30}" width="112" height="56" rx="14"/><text x="566" y="${y+11}" text-anchor="middle"><tspan class="word-o">${on}</tspan><tspan class="word-r">${fam}</tspan></text><rect class="hit" x="505" y="${y-34}" width="122" height="66"/></g>`;
+    const y=yOf(i), p=parts(f,w);
+    const lfs=sizeBy(w[0].length,[40,34,28,23,20]);
+    const wfs=sizeBy(p.word.length,[30,30,30,30,27,23,20]);
+    s+=`<g class="${i===wIdx?'sel':''}" data-i="${i}"><rect class="sel-bg" x="${P.bx}" y="${y-30}" width="${P.bw}" height="58" rx="14"/><text class="left-part ${leftCls}" x="${P.cx}" y="${y+lfs*0.35}" text-anchor="middle" font-size="${lfs}">${w[0]}</text><rect class="hit" x="${P.bx-6}" y="${y-34}" width="${P.bw+12}" height="66"/></g>`;
+    s+=`<g class="${i===wIdx?'sel':''}" data-i="${i}"><rect class="sel-bg" x="${Wd.bx}" y="${y-28}" width="${Wd.bw}" height="54" rx="14"/><text x="${Wd.cx}" y="${y+wfs*0.35}" text-anchor="middle" font-size="${wfs}"><tspan class="word-o">${p.on}</tspan><tspan class="word-r">${p.rime}</tspan></text><rect class="hit" x="${Wd.bx-4}" y="${y-34}" width="${Wd.bw+8}" height="66"/></g>`;
   });
   svg.innerHTML=s;
-  svg.querySelectorAll("g[data-i]").forEach(g=>g.onclick=()=>{
-    wIdx=+g.dataset.i; renderSelection(); playSegmented();
-  });
-  svg.querySelector("[data-rime]").onclick=async()=>{stopAll();const id=runId;lit("tR");pulse();await speak(RIME_SOUND[fam]);if(id===runId)clearLit();};
-  $("famTag").textContent="CVC word -"+fam;
+  svg.querySelectorAll("g[data-i]").forEach(g=>g.onclick=()=>{wIdx=+g.dataset.i;renderSelection();playSegmented();});
+  svg.querySelector("[data-center]").onclick=async()=>{
+    stopAll(); const id=runId; pulse();
+    if(f.type==="r"){ lit("tR"); await speak(f.say||say(f.c)); }
+    else { lit("tO"); await playOnset(f.c,id); }
+    if(id===runId) clearLit();
+  };
 }
 
 function renderSelection(){
-  const w=WORDS[fam][wIdx], on=w[0][0];
+  const f=curFam(), w=f.w[wIdx], p=parts(f,w);
   $("emoji").textContent=w[1];
-  $("tO").textContent=on; $("tR").textContent=fam;
-  $("tW").innerHTML=`<span style="color:var(--onset)">${on}</span><span style="color:var(--rime)">${fam}</span>`;
-  $("thai").textContent=w[2]; $("say").textContent="อ่านว่า: "+w[3];
+  $("tO").textContent=p.on; $("tR").textContent=p.rime;
+  $("tW").innerHTML=`<span style="color:var(--onset)">${p.on}</span><span style="color:var(--rime)">${p.rime}</span>`;
+  $("thai").textContent=w[2];
+  $("say").textContent=w[3]?"อ่านว่า "+w[3]:"";
   document.querySelectorAll("#wheel g[data-i]").forEach(g=>g.classList.toggle("sel",+g.dataset.i===wIdx));
 }
+function renderAll(){renderNav();renderSubs();renderFamilies();renderWheel();renderSelection();}
 
-function renderAll(){renderVowels();renderFamilies();renderWheel();renderSelection();}
-
-// ---------- highlight helpers ----------
+// ================= HIGHLIGHT =================
 function clearLit(){
   ["tO","tR","tW"].forEach(id=>$(id).classList.remove("lit"));
   document.querySelectorAll("#wheel .ln").forEach(l=>l.classList.remove("on"));
@@ -257,36 +504,35 @@ function clearLit(){
 function lit(id){clearLit();$(id).classList.add("lit");}
 function pulse(){const r=$("ring");if(!r)return;r.classList.remove("pulse");void r.getBBox();r.classList.add("pulse");}
 
-// ---------- playback ----------
+// ================= PLAYBACK =================
 async function playSegmented(fromAll=false){
   if(!fromAll) stopAll();
-  const id=runId, w=WORDS[fam][wIdx], on=w[0][0];
+  const id=runId, f=curFam(), w=f.w[wIdx], p=parts(f,w);
+  const rimeSay = f.type==="r" ? (f.say||say(f.c)) : say(w[0]);
   lit("tO"); $("lnL"+wIdx)?.classList.add("on");
-  await speak(ONSET_SOUND[on]); if(id!==runId) return; await wait(250);
+  await playOnset(p.on,id); if(id!==runId) return; await wait(250);
   lit("tR"); $("lnL"+wIdx)?.classList.add("on"); pulse();
-  await speak(RIME_SOUND[fam]); if(id!==runId) return; await wait(300);
+  await speak(rimeSay); if(id!==runId) return; await wait(300);
   lit("tW"); $("lnR"+wIdx)?.classList.add("on");
-  await speak(w[0],"en",0.9); if(id!==runId) return;
-  await wait(250); await speak(w[0],"en",1); if(id!==runId) return;
+  await speak(p.word,"en",0.9); if(id!==runId) return;
+  await wait(250); await speak(p.word); if(id!==runId) return;
   if($("thaiOn").checked){ await wait(200); await speak(w[2],"th"); if(id!==runId) return; }
   if(!fromAll) clearLit();
 }
 async function playWord(){
-  stopAll(); const id=runId, w=WORDS[fam][wIdx];
+  stopAll(); const id=runId, f=curFam(), w=f.w[wIdx], p=parts(f,w);
   lit("tW"); $("lnR"+wIdx)?.classList.add("on");
-  await speak(w[0]); if(id!==runId) return;
+  await speak(p.word); if(id!==runId) return;
   if($("thaiOn").checked){ await wait(200); await speak(w[2],"th"); }
   if(id===runId) clearLit();
 }
 async function playAll(){
-  stopAll(); const id=runId;
-  await speak("The "+RIME_SOUND[fam]+" family"); if(id!==runId) return;
-  for(let i=0;i<WORDS[fam].length;i++){
+  stopAll(); const id=runId, n=curFam().w.length;
+  for(let i=0;i<n;i++){
     wIdx=i; renderSelection();
     await playSegmented(true); if(id!==runId) return;
-    await wait(600);
+    clearLit(); await wait(600);
   }
-  clearLit();
 }
 
 $("bSeg").onclick=()=>playSegmented();
